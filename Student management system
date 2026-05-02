@@ -1,0 +1,232 @@
+#include<iostream>
+using namespace std;
+
+class student_details{
+public:
+    int stack_student_id[100];
+    int stack_marks[100];
+    string stack_name[100];
+    string stack_course[100];
+    int i = 0;
+    int deleted_id[100];
+    string deleted_name[100];
+    string deleted_course[100];
+    int deleted_marks[100];
+
+int top = -1;
+
+    void input_details(){
+        cin.ignore(1000,'\n');
+        cout<<"enter your name:"<<endl;
+        getline(cin,stack_name[i]);
+
+        cout<<"enter your student_id:"<<endl;
+        cin>>stack_student_id[i];
+
+        cin.ignore(1000,'\n');
+        cout<<"enter your course:"<<endl;
+        getline(cin,stack_course[i]);
+
+        cout<<"enter your marks:"<<endl;
+        cin>>stack_marks[i];
+
+        i++;
+    }
+
+    void student_delete_data(){
+        string option;
+        cout<<"do you want to delete data? yes or no:"<<endl;
+        cin>>option;
+
+        if(option=="yes"){
+            int id;
+            cout<<"enter the student id you want to delete data:"<<endl;
+            cin>>id;
+
+            bool found=false;
+
+            for(int detection=0; detection<i; detection++){
+                if(stack_student_id[detection]==id){
+
+                    for(int j=detection; j<i-1; j++){
+                        stack_student_id[j]=stack_student_id[j+1];
+                        stack_name[j]=stack_name[j+1];
+                        stack_course[j]=stack_course[j+1];
+                        stack_marks[j]=stack_marks[j+1];
+                    }
+
+                    i--;
+                    found=true;
+                    cout<<"data deleted successfully"<<endl;
+                    break;
+                }
+            }
+
+            if(!found){
+                cout<<"you entered an invalid id"<<endl;
+            }
+        }
+    }
+
+    void search_student(){
+        int student_id_search;
+        cout<<"enter the student id you want to search the details:"<<endl;
+        cin>>student_id_search;
+
+        for(int varification=0; varification<i; varification++){
+            if(stack_student_id[varification]==student_id_search){
+                cout<<"name:"<<stack_name[varification]<<endl;
+                cout<<"course:"<<stack_course[varification]<<endl;
+                cout<<"marks:"<<stack_marks[varification]<<endl;
+                cout<<"student_id:"<<stack_student_id[varification]<<endl;
+                return;
+            }
+        }
+
+        cout<<"student not found"<<endl;
+    }
+
+    void display_all(){
+        cout<<"here is student details:"<<endl;
+
+        for(int details=0; details<i; details++){
+            cout<<"name:"<<stack_name[details]<<endl;
+            cout<<"course:"<<stack_course[details]<<endl;
+            cout<<"marks:"<<stack_marks[details]<<endl;
+            cout<<"student_id:"<<stack_student_id[details]<<endl;
+            cout<<endl;
+        }
+    }
+
+    void search_by_marks(){
+        int marks_search;
+        cout<<"enter the marks you want to search the details:"<<endl;
+        cin>>marks_search;
+
+        bool found=false;
+
+        for(int varification=0; varification<i; varification++){
+            if(stack_marks[varification]==marks_search){
+                cout<<"name:"<<stack_name[varification]<<endl;
+                cout<<"course:"<<stack_course[varification]<<endl;
+                cout<<"marks:"<<stack_marks[varification]<<endl;
+                cout<<"student_id:"<<stack_student_id[varification]<<endl;
+                found=true;
+            }
+        }
+
+        if(!found){
+            cout<<"student not found"<<endl;
+        }
+    }
+    void stack_delete(){
+
+    int id;
+    cout<<"enter the student id you want to delete data:"<<endl;
+    cin>>id;
+
+    for(int detection=0; detection<i; detection++){
+
+        if(stack_student_id[detection]==id){
+
+            // push to stack
+            top++;
+            deleted_id[top] = stack_student_id[detection];
+            deleted_name[top] = stack_name[detection];
+            deleted_course[top] = stack_course[detection];
+            deleted_marks[top] = stack_marks[detection];
+
+            for(int j=detection; j<i-1; j++){
+                stack_student_id[j]=stack_student_id[j+1];
+                stack_name[j]=stack_name[j+1];
+                stack_course[j]=stack_course[j+1];
+                stack_marks[j]=stack_marks[j+1];
+                cout<<"name:"<<stack_name[j]<<endl;
+                cout<<"course:"<<stack_course[j]<<endl;
+                cout<<"marks:"<<stack_marks[j]<<endl;
+                cout<<"student_id:"<<stack_student_id[j]<<endl;
+            }
+
+            i--;
+            cout<<"data deleted successfully"<<endl;
+            return;
+        }
+    }
+
+    cout<<"student not found"<<endl;
+}
+void return_deleted_Data(){
+
+    if(top == -1){
+        cout<<"no deleted data to restore"<<endl;
+        return;
+    }
+
+    stack_student_id[i] = deleted_id[top];
+    stack_name[i] = deleted_name[top];
+    stack_course[i] = deleted_course[top];
+    stack_marks[i] = deleted_marks[top];
+    cout<<"name:"<<stack_name[i]<<endl;
+    cout<<"course:"<<stack_course[i]<<endl;
+    cout<<"marks:"<<stack_marks[i]<<endl;
+    cout<<"student_id:"<<stack_student_id[i]<<endl;
+    top--;
+    i++;
+
+    cout<<"deleted student restored"<<endl;
+}
+};
+
+int main(){
+
+    student_details s1;
+    int n;
+
+    cout<<"enter the number of how many students details you want to enter:";
+    cin>>n;
+
+    for(int j=0; j<n; j++){
+        s1.input_details();
+    }
+
+    string searching_method;
+
+    cin.ignore(1000,'\n');
+    cout<<"which method you prefer to search the details (student id or marks)?: ";
+    getline(cin,searching_method);
+
+    if(searching_method=="student id" || searching_method=="Student id"){
+        s1.search_student();
+    }
+    else if(searching_method=="marks"){
+        s1.search_by_marks();
+    }
+
+    string display_option;
+
+    cin.ignore(1000,'\n');
+    cout<<"what do you want to do (display all details or delete data)?: ";
+    getline(cin,display_option);
+
+    if(display_option=="display all details"){
+        s1.display_all();
+    }
+    else if(display_option=="delete data"){
+        string delete_option;
+        cout<<"which method you prefer to delete data(stack method or normal method)?: ";
+        getline(cin,delete_option);
+        if(delete_option=="stack method"){
+            s1.stack_delete();
+        }
+        else if(delete_option=="normal method"){
+            s1.student_delete_data();
+        }
+    }
+    cout<<"do you want to restore deleted data? yes or no:"<<endl;
+    string restore_option;
+    cin>>restore_option;
+    if(restore_option=="yes"){
+        s1.return_deleted_Data();
+    }
+    return 0;
+}
