@@ -1,0 +1,60 @@
+# Student Record Management System (C++)
+
+## Overview
+This is a console-based Student Record Management System developed using C++. The project helps in managing student data efficiently such as adding, searching, deleting, displaying, and restoring records.
+
+---
+
+## Features
+- Add new student details (Name, ID, Course, Marks)
+- Search student by ID
+- Search student by Marks
+- Display all student records
+- Delete student record (normal method)
+- Stack-based delete with undo (restore feature)
+- Restore previously deleted student record
+
+---
+
+## Technologies Used
+- C++
+- Arrays
+- Object-Oriented Programming (OOP concepts)
+- Stack-like structure (for undo functionality)
+
+---
+
+## How to Run
+1. Download the source code
+2. Open it in any C++ compiler (VS Code / CodeBlocks / Dev C++)
+3. Compile the program
+4. Run the executable file
+5. Follow the on-screen instructions
+
+---
+
+## Learning Outcomes
+- Improved understanding of C++ basics
+- Practiced arrays and class-based programming
+- Implemented search and delete operations
+- Learned stack-like behavior for undo functionality
+- Strengthened problem-solving skills
+
+---
+
+## Author
+Puneet (CSE Student)  
+GitHub: https://github.com/puneet-a11
+
+---
+
+## Future Improvements
+- Add file handling for permanent data storage
+- Use STL (vector, stack) instead of arrays
+- Add GUI version
+- Improve input validation and error handling
+
+---
+
+## Note
+This is a beginner-friendly project focused on learning core C++ concepts and basic data structure implementation.
