@@ -1,0 +1,386 @@
+#include<iostream>
+using namespace std;
+
+// ================= ACCOUNT =================
+class Account {
+protected:
+    string name, address, city, state, nominee;
+    int acc_no, pin, pincode;
+    long long mobile;
+    float balance;
+
+public:
+    virtual void take_input() = 0;
+    virtual void special() = 0;
+
+    virtual bool withdraw(float amt) {
+        if(amt <= 0) {
+            cout << "Invalid amount\n";
+            return false;
+        }
+
+        if(amt > balance) {
+            cout << "Insufficient balance\n";
+            return false;
+        }
+
+        balance -= amt;
+        cout << "Withdraw successful\n";
+        return true;
+    }
+
+    void deposit(float amt) {
+        if(amt <= 0) {
+            cout << "Invalid amount\n";
+            return;
+        }
+        balance += amt;
+        cout << "Deposit successful\n";
+    }
+
+    int getAcc() { return acc_no; }
+    int getPin() { return pin; }
+    float getBal() { return balance; }
+
+    // setters
+    void setAcc(int n) { acc_no = n; }
+    void setName(string n) { name = n; }
+    void setPin(int p) { pin = p; }
+    void setMobile(long long m) { mobile = m; }
+    void setAddress(string a) { address = a; }
+    void setCity(string c) { city = c; }
+    void setState(string s) { state = s; }
+    void setPincode(int p) { pincode = p; }
+    void setNominee(string n) { nominee = n; }
+    void setBalance(float b) { balance = b; }
+
+    void show() {
+        cout << "\n====== ACCOUNT DETAILS ======\n";
+        cout << "Name      : " << name;
+        cout << "\nAcc No    : " << acc_no;
+        cout << "\nBalance   : " << balance;
+        cout << "\nMobile    : " << mobile;
+        cout << "\nAddress   : " << address;
+        cout << "\nCity      : " << city;
+        cout << "\nState     : " << state;
+        cout << "\nPincode   : " << pincode;
+        cout << "\nNominee   : " << nominee << endl;
+    }
+};
+
+// ================= SAVINGS =================
+class Savings : public Account {
+    float rate;
+
+public:
+    void take_input() {
+        cin.ignore(1000, '\n');
+
+        cout << "Enter Name: ";
+        getline(cin, name);
+
+        cout << "Enter Balance: ";
+        cin >> balance;
+
+        cout << "Enter PIN: ";
+        cin >> pin;
+
+        cout << "Enter Mobile: ";
+        cin >> mobile;
+
+        cin.ignore(1000, '\n');
+        cout << "Enter Address: ";
+        getline(cin, address);
+
+        cout << "Enter City: ";
+        getline(cin, city);
+
+        cout << "Enter State: ";
+        getline(cin, state);
+
+        cout << "Enter Pincode: ";
+        cin >> pincode;
+
+        cin.ignore(1000, '\n');
+        cout << "Enter Nominee: ";
+        getline(cin, nominee);
+
+        cout << "Enter Interest Rate: ";
+        cin >> rate;
+    }
+
+    void special() {
+        cout << "Interest Earned: " << balance * rate << endl;
+    }
+};
+
+// ================= CURRENT =================
+class Current : public Account {
+    float overdraft = 5000;
+
+public:
+    void take_input() {
+        cin.ignore(1000, '\n');
+
+        cout << "Enter Name: ";
+        getline(cin, name);
+
+        cout << "Enter Balance: ";
+        cin >> balance;
+
+        cout << "Enter PIN: ";
+        cin >> pin;
+
+        cout << "Enter Mobile: ";
+        cin >> mobile;
+
+        cin.ignore(1000, '\n');
+        cout << "Enter Address: ";
+        getline(cin, address);
+
+        cout << "Enter City: ";
+        getline(cin, city);
+
+        cout << "Enter State: ";
+        getline(cin, state);
+
+        cout << "Enter Pincode: ";
+        cin >> pincode;
+
+        cin.ignore(1000, '\n');
+        cout << "Enter Nominee: ";
+        getline(cin, nominee);
+    }
+
+    bool withdraw(float amt) {
+        if(amt <= 0) {
+            cout << "Invalid amount\n";
+            return false;
+        }
+
+        if((balance + overdraft) < amt) {
+            cout << "Overdraft limit exceeded\n";
+            return false;
+        }
+
+        balance -= amt;
+        cout << "Withdraw successful\n";
+        return true;
+    }
+
+    void special() {
+        cout << "Overdraft Limit: " << overdraft << endl;
+    }
+};
+
+// ================= BANK =================
+class Bank {
+    Account* acc[100];
+    int count = 0;
+    int nextAcc = 1001;
+
+public:
+
+    void create() {
+        string type;
+        cout << "Type (savings/current): ";
+        cin >> type;
+
+        Account* a;
+
+        if(type == "savings" || type == "saving")
+            a = new Savings();
+        else
+            a = new Current();
+
+        a->take_input();
+        a->setAcc(nextAcc++);
+
+        acc[count++] = a;
+
+        cout << "Account Created! Acc No: " << a->getAcc() << endl;
+    }
+
+    Account* login() {
+        int no, p;
+        cout << "Enter Acc No: ";
+        cin >> no;
+        cout << "Enter PIN: ";
+        cin >> p;
+
+        for(int i = 0; i < count; i++) {
+            if(acc[i]->getAcc() == no && acc[i]->getPin() == p) {
+                cout << "Login Successful\n";
+                return acc[i];
+            }
+        }
+        cout << "Wrong Details\n";
+        return NULL;
+    }
+
+    Account* find(int no) {
+        for(int i = 0; i < count; i++) {
+            if(acc[i]->getAcc() == no)
+                return acc[i];
+        }
+        return NULL;
+    }
+
+    void transfer(Account* user) {
+        int to;
+        float amt;
+
+        cout << "Enter Receiver Acc No: ";
+        cin >> to;
+
+        if(to == user->getAcc()) {
+            cout << "Cannot transfer to same account\n";
+            return;
+        }
+
+        cout << "Enter Amount: ";
+        cin >> amt;
+
+        if(amt <= 0) {
+            cout << "Invalid amount\n";
+            return;
+        }
+
+        Account* r = find(to);
+
+        if(r == NULL) {
+            cout << "Account not found\n";
+            return;
+        }
+
+        if(user->withdraw(amt)) {
+            r->deposit(amt);
+            cout << "Transfer Successful!\n";
+        }
+    }
+
+    void update(Account* user) {
+        int ch;
+        cout << "\n===== UPDATE DETAILS =====\n";
+        cout << "1. Name\n2. PIN\n3. Mobile\n4. Address\n5. City\n6. State\n7. Pincode\n8. Nominee\n";
+        cout << "Enter choice: ";
+        cin >> ch;
+        cin.ignore(1000, '\n');
+
+        string temp;
+        int p;
+        long long m;
+
+        switch(ch) {
+            case 1:
+                cout << "Enter your new name: ";
+                getline(cin, temp);
+                user->setName(temp);
+                break;
+
+            case 2:
+                cout << "Enter your new PIN: ";
+                cin >> p;
+                user->setPin(p);
+                break;
+
+            case 3:
+                cout << "Enter your new mobile number: ";
+                cin >> m;
+                user->setMobile(m);
+                break;
+
+            case 4:
+                cout << "Enter your new address: ";
+                cin.ignore(1000, '\n');
+                getline(cin, temp);
+                user->setAddress(temp);
+                break;
+
+            case 5:
+                cout << "Enter your new city: ";
+                getline(cin, temp);
+                user->setCity(temp);
+                break;
+
+            case 6:
+                cout << "Enter your new state: ";
+                getline(cin, temp);
+                user->setState(temp);
+                break;
+
+            case 7:
+                cout << "Enter your new pincode: ";
+                cin >> p;
+                user->setPincode(p);
+                break;
+
+            case 8:
+                cout << "Enter your nominee name: ";
+                cin.ignore(1000, '\n');
+                getline(cin, temp);
+                user->setNominee(temp);
+                break;
+
+            default:
+                cout << "Invalid choice\n";
+                return;
+        }
+
+        cout << "\nDetails Updated Successfully!\n";
+    }
+
+    void menu(Account* user) {
+        int ch;
+        while(true) {
+            cout << "\n1.Balance\n2.Deposit\n3.Withdraw\n4.Transfer\n5.Special\n6.Update\n7.Show\n8.Logout\n";
+            cout << "Enter choice: ";
+            cin >> ch;
+
+            switch(ch) {
+                case 1: cout << "Balance: " << user->getBal() << endl; break;
+                case 2: { float a; cin >> a; user->deposit(a); break; }
+                case 3: { float a; cin >> a; user->withdraw(a); break; }
+                case 4: transfer(user); break;
+                case 5: user->special(); break;
+                case 6: update(user); break;
+                case 7: user->show(); break;
+                case 8: return;
+                default: cout << "Invalid choice\n";
+            }
+        }
+    }
+
+    void run() {
+        int ch;
+        while(true) {
+            cout << "\n1.Create Account\n2.Login\n3.Exit\n";
+            cout << "Enter choice: ";
+            cin >> ch;
+
+            if(ch == 1) create();
+            else if(ch == 2) {
+                Account* u = login();
+                if(u) menu(u);
+            }
+            else if(ch == 3) {
+                cout << "Thank you!\n";
+                break;
+            }
+            else {
+                cout << "Invalid choice\n";
+            }
+        }
+    }
+
+    ~Bank() {
+        for(int i = 0; i < count; i++)
+            delete acc[i];
+    }
+};
+
+// ================= MAIN =================
+int main() {
+    Bank b;
+    b.run();
+}
