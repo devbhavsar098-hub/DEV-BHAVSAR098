@@ -1,0 +1,82 @@
+from cryptography.fernet import Fernet
+
+# Generate key and save it
+def generate_key():
+    key = Fernet.generate_key()
+    with open("secret.key", "wb") as key_file:
+        key_file.write(key)
+
+# Load existing key
+def load_key():
+    return open("secret.key", "rb").read()
+
+# Encrypt file
+def encrypt_file(filename):
+    key = load_key()
+    fernet = Fernet(key)
+
+    with open(filename, "rb") as file:
+        original = file.read()
+
+    encrypted = fernet.encrypt(original)
+
+    encrypted_file = "encrypted_" + filename
+
+    with open(encrypted_file, "wb") as enc_file:
+        enc_file.write(encrypted)
+
+    print(f"File encrypted successfully!")
+    print(f"Saved as: {encrypted_file}")
+
+# Decrypt file
+def decrypt_file(filename):
+    key = load_key()
+    fernet = Fernet(key)
+
+    with open(filename, "rb") as enc_file:
+        encrypted = enc_file.read()
+
+    decrypted = fernet.decrypt(encrypted)
+
+    decrypted_file = "decrypted_" + filename
+
+    with open(decrypted_file, "wb") as dec_file:
+        dec_file.write(decrypted)
+
+    print(f"File decrypted successfully!")
+    print(f"Saved as: {decrypted_file}")
+
+# Main Menu
+def main():
+
+    if not os.path.exists("secret.key"):
+        generate_key()
+
+    while True:
+
+        print("\n===== File Encryption System =====")
+        print("1. Encrypt File")
+        print("2. Decrypt File")
+        print("3. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            filename = input("Enter file name to encrypt: ")
+            encrypt_file(filename)
+
+        elif choice == "2":
+            filename = input("Enter file name to decrypt: ")
+            decrypt_file(filename)
+
+        elif choice == "3":
+            print("Program exited.")
+            break
+
+        else:
+            print("Invalid choice!")
+
+import os
+
+if __name__ == "__main__":
+    main()
